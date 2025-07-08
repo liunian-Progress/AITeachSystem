@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>智教多模态 - 教学资源制作系统</title>
+    <!-- 引入Element UI样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入Vue和Element UI -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -36,19 +42,18 @@
             overflow-x: hidden;
         }
 
-        .container {
+        .app-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* 侧边导航 */
-        .sidebar {
+        /* 侧边导航 - 自定义样式 */
+        .el-menu-custom {
             width: 250px;
-            background-color: rgba(26, 37, 48, 0.9);
-            padding: 20px 0;
-            border-right: 1px solid var(--border);
-            position: fixed;
+            background-color: rgba(26, 37, 48, 0.9) !important;
+            border-right: 1px solid var(--border) !important;
             height: 100vh;
+            position: fixed;
             z-index: 100;
             transition: all 0.3s ease;
         }
@@ -56,9 +61,9 @@
         .logo {
             display: flex;
             align-items: center;
-            padding: 0 20px 20px;
+            padding: 20px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
+            background-color: rgba(26, 37, 48, 0.95);
         }
 
         .logo-icon {
@@ -75,27 +80,25 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-item {
-            padding: 15px 25px;
+        .el-menu-item-custom {
             display: flex;
             align-items: center;
-            color: var(--light);
-            text-decoration: none;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
+            padding: 0 25px !important;
+            height: 60px !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.3s ease !important;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(52, 73, 94, 0.5);
-            border-left: 3px solid var(--accent);
-            color: white;
+        .el-menu-item-custom i {
+            font-size: 20px !important;
+            width: 30px !important;
+            margin-right: 15px !important;
         }
 
-        .nav-item i {
-            font-size: 20px;
-            width: 30px;
-            margin-right: 15px;
+        .el-menu-item-custom:hover, .el-menu-item-custom.is-active {
+            background-color: rgba(52, 73, 94, 0.5) !important;
+            border-left: 3px solid var(--accent) !important;
+            color: white !important;
         }
 
         /* 主内容区 */
@@ -520,7 +523,7 @@
             background-color: var(--primary);
         }
 
-        /* 创新功能 */
+        /* AI助手（创新功能） */
         .ai-assistant {
             background: linear-gradient(135deg, #1a2530, #2c3e50);
             border-radius: 15px;
@@ -668,22 +671,25 @@
 
         /* 响应式设计 */
         @media (max-width: 992px) {
-            .sidebar {
+            .el-menu-custom {
                 width: 80px;
             }
-            .sidebar .logo-text, .sidebar .nav-text {
+            .logo-text {
                 display: none;
             }
-            .sidebar .logo {
+            .logo {
                 justify-content: center;
                 padding: 20px 0;
             }
-            .sidebar .nav-item {
+            .el-menu-item-custom {
                 justify-content: center;
-                padding: 20px 0;
+                padding: 0 !important;
             }
-            .sidebar .nav-item i {
-                margin-right: 0;
+            .el-menu-item-custom i {
+                margin-right: 0 !important;
+            }
+            .el-menu-item-custom span {
+                display: none;
             }
             .main-content {
                 margin-left: 80px;
@@ -709,340 +715,842 @@
                 max-width: 100%;
             }
         }
+
+        /* 页面内容区域 */
+        .page-content {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .page-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .page-title i {
+            color: var(--accent);
+        }
+        
+        /* 设置页面样式 */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .settings-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .settings-card h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .settings-card h3 i {
+            color: var(--primary);
+        }
+        
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-option label {
+            cursor: pointer;
+        }
+        
+        /* 团队协作页面 */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .team-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .team-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .team-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            color: var(--primary);
+        }
+        
+        .team-info {
+            flex: 1;
+        }
+        
+        .team-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .team-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .team-members {
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .member {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #16a085);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .member-name {
+            font-size: 12px;
+        }
+        
+        /* 课件生成页面 */
+        .courseware-builder {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .template-selector {
+            width: 250px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        
+        .template-card {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        
+        .template-card:hover, .template-card.active {
+            border-color: var(--primary);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .template-card h4 {
+            margin-bottom: 5px;
+        }
+        
+        .template-card p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .builder-preview {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-placeholder {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .preview-placeholder i {
+            font-size: 60px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .preview-placeholder h3 {
+            margin-bottom: 15px;
+        }
+        
+        .preview-placeholder p {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 侧边导航 -->
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <div class="logo-text">智教多模态</div>
-            </div>
-            <a href="#" class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span class="nav-text">控制面板</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span class="nav-text">资源上传</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-cogs"></i>
-                <span class="nav-text">资源制作</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-boxes"></i>
-                <span class="nav-text">资源管理</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-chalkboard-teacher"></i>
-                <span class="nav-text">课件生成</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-robot"></i>
-                <span class="nav-text">AI助手</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span class="nav-text">团队协作</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-cog"></i>
-                <span class="nav-text">系统设置</span>
-            </a>
-        </div>
-
-        <!-- 主内容区 -->
-        <div class="main-content">
-            <!-- 顶部栏 -->
-            <div class="topbar">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="搜索教学资源...">
-                </div>
-                <div class="user-actions">
-                    <div class="action-icon">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
+    <div id="app">
+        <div class="app-container">
+            <!-- 侧边导航 - 使用Element UI菜单 -->
+            <el-menu
+                class="el-menu-custom"
+                :default-active="activeMenu"
+                @select="handleMenuSelect"
+            >
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
                     </div>
-                    <div class="action-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="user-profile">
-                        <div class="user-avatar">张</div>
-                        <div class="user-name">张老师</div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
+                    <div class="logo-text">智教多模态</div>
                 </div>
-            </div>
-
-            <!-- 仪表板卡片 -->
-            <div class="dashboard">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">教学资源</div>
-                        <div class="card-icon">
-                            <i class="fas fa-book"></i>
-                        </div>
-                    </div>
-                    <div class="card-stats">1,248</div>
-                    <div class="card-desc">已创建的教学资源总数</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">AI生成</div>
-                        <div class="card-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                    </div>
-                    <div class="card-stats">763</div>
-                    <div class="card-desc">AI辅助生成的教学资源</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">今日活跃</div>
-                        <div class="card-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                    <div class="card-stats">42</div>
-                    <div class="card-desc">今日新增或修改的资源</div>
-                </div>
-            </div>
-
-            <!-- 上传区域 -->
-            <div class="upload-section">
-                <h2 class="section-title">
+                <el-menu-item index="dashboard" class="el-menu-item-custom">
+                    <i class="fas fa-home"></i>
+                    <span>控制面板</span>
+                </el-menu-item>
+                <el-menu-item index="upload" class="el-menu-item-custom">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    上传教学资源
-                </h2>
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">
-                        <i class="fas fa-file-upload"></i>
-                    </div>
-                    <h3 class="upload-text">拖放文件到此处或点击上传</h3>
-                    <p class="upload-subtext">支持文本、图像、音频、视频等多种格式</p>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-folder-open"></i>
-                        选择文件
-                    </button>
-                    <div class="file-types">
-                        <div class="file-type">PDF/DOC/TXT</div>
-                        <div class="file-type">JPG/PNG/GIF</div>
-                        <div class="file-type">MP3/WAV</div>
-                        <div class="file-type">MP4/MOV</div>
-                        <div class="file-type">PPT/XLS</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 资源制作工具 -->
-            <div class="tools-section">
-                <h2 class="section-title">
+                    <span>资源上传</span>
+                </el-menu-item>
+                <el-menu-item index="creation" class="el-menu-item-custom">
                     <i class="fas fa-cogs"></i>
-                    资源制作工具
-                </h2>
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-font"></i>
-                        </div>
-                        <h3 class="tool-title">文本生成</h3>
-                        <p class="tool-desc">利用大模型生成教学大纲、习题、案例等文本内容</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <h3 class="tool-title">图像生成</h3>
-                        <p class="tool-desc">根据描述生成教学插图、图表和示意图</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-headphones"></i>
-                        </div>
-                        <h3 class="tool-title">音频合成</h3>
-                        <p class="tool-desc">生成语音讲解、背景音乐等音频资源</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h3 class="tool-title">视频生成</h3>
-                        <p class="tool-desc">自动生成教学讲解视频与动画</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-film"></i>
-                        </div>
-                        <h3 class="tool-title">视频编辑</h3>
-                        <p class="tool-desc">AI辅助视频剪辑与特效添加</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-file-powerpoint"></i>
-                        </div>
-                        <h3 class="tool-title">课件制作</h3>
-                        <p class="tool-desc">一键生成完整教学课件</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 资源管理 -->
-            <div class="management-section">
-                <h2 class="section-title">
+                    <span>资源制作</span>
+                </el-menu-item>
+                <el-menu-item index="management" class="el-menu-item-custom">
                     <i class="fas fa-boxes"></i>
-                    资源管理
-                </h2>
-                <div class="resource-filters">
-                    <button class="filter-btn active">全部</button>
-                    <button class="filter-btn">文本</button>
-                    <button class="filter-btn">图像</button>
-                    <button class="filter-btn">音频</button>
-                    <button class="filter-btn">视频</button>
-                    <button class="filter-btn">课件</button>
-                    <button class="filter-btn">最近使用</button>
-                </div>
-                <div class="resource-grid">
-                    <div class="resource-card">
-                        <div class="resource-thumb">
-                            <div class="resource-type">课件</div>
-                        </div>
-                        <div class="resource-info">
-                            <h3 class="resource-title">初中物理 - 力学基础课件</h3>
-                            <div class="resource-meta">
-                                <span>2023-10-15</span>
-                                <span>张老师</span>
-                            </div>
-                            <div class="resource-actions">
-                                <button class="action-btn">
-                                    <i class="fas fa-eye"></i> 预览
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-download"></i> 下载
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-edit"></i> 编辑
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-thumb">
-                            <div class="resource-type">视频</div>
-                        </div>
-                        <div class="resource-info">
-                            <h3 class="resource-title">化学实验 - 酸碱中和反应演示</h3>
-                            <div class="resource-meta">
-                                <span>2023-10-12</span>
-                                <span>李老师</span>
-                            </div>
-                            <div class="resource-actions">
-                                <button class="action-btn">
-                                    <i class="fas fa-eye"></i> 预览
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-download"></i> 下载
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-edit"></i> 编辑
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-thumb">
-                            <div class="resource-type">习题集</div>
-                        </div>
-                        <div class="resource-info">
-                            <h3 class="resource-title">高中数学 - 三角函数练习题</h3>
-                            <div class="resource-meta">
-                                <span>2023-10-10</span>
-                                <span>王老师</span>
-                            </div>
-                            <div class="resource-actions">
-                                <button class="action-btn">
-                                    <i class="fas fa-eye"></i> 预览
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-download"></i> 下载
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-edit"></i> 编辑
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <span>资源管理</span>
+                </el-menu-item>
+                <el-menu-item index="courseware" class="el-menu-item-custom">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>课件生成</span>
+                </el-menu-item>
+                <el-menu-item index="ai" class="el-menu-item-custom">
+                    <i class="fas fa-robot"></i>
+                    <span>AI助手</span>
+                </el-menu-item>
+                <el-menu-item index="collaboration" class="el-menu-item-custom">
+                    <i class="fas fa-users"></i>
+                    <span>团队协作</span>
+                </el-menu-item>
+                <el-menu-item index="settings" class="el-menu-item-custom">
+                    <i class="fas fa-cog"></i>
+                    <span>系统设置</span>
+                </el-menu-item>
+            </el-menu>
 
-            <!-- AI助手（创新功能） -->
-            <div class="ai-assistant">
-                <div class="ai-header">
-                    <h2 class="ai-title">AI教学助手</h2>
-                    <p class="ai-subtitle">智能问答、资源建议、内容优化，您的全天候教学助手</p>
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <!-- 顶部栏 -->
+                <div class="topbar">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" :placeholder="searchPlaceholder">
+                    </div>
+                    <div class="user-actions">
+                        <div class="action-icon">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </div>
+                        <div class="action-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="user-profile" @click="userMenuVisible = true">
+                            <div class="user-avatar">张</div>
+                            <div class="user-name">张老师</div>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
                 </div>
-                <div class="ai-content">
-                    <div class="ai-chat">
-                        <div class="chat-messages">
-                            <div class="message ai">
-                                您好！我是您的AI教学助手。请问有什么可以帮您？例如：<br>
-                                - 帮我生成一份关于光合作用的初中生物教案<br>
-                                - 我需要一些关于二次函数的练习题<br>
-                                - 请解释牛顿第一定律并给出教学建议
+
+                <!-- 页面内容区域 -->
+                <div class="page-content">
+                    <!-- 控制面板 -->
+                    <div v-if="currentPage === 'dashboard'">
+                        <div class="dashboard">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">教学资源</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                </div>
+                                <div class="card-stats">1,248</div>
+                                <div class="card-desc">已创建的教学资源总数</div>
                             </div>
-                            <div class="message user">
-                                请帮我生成一份关于"第二次世界大战"的高中历史教案框架。
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">AI生成</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                </div>
+                                <div class="card-stats">763</div>
+                                <div class="card-desc">AI辅助生成的教学资源</div>
                             </div>
-                            <div class="message ai">
-                                好的，正在为您生成"第二次世界大战"的高中历史教案框架...
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">今日活跃</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                </div>
+                                <div class="card-stats">42</div>
+                                <div class="card-desc">今日新增或修改的资源</div>
                             </div>
                         </div>
-                        <div class="chat-input">
-                            <input type="text" placeholder="输入您的问题或指令...">
-                            <button class="send-btn">
-                                <i class="fas fa-paper-plane"></i>
+
+                        <!-- 上传区域 -->
+                        <div class="upload-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                上传教学资源
+                            </h2>
+                            <div class="upload-area" id="uploadArea" @click="openFileDialog">
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-upload"></i>
+                                </div>
+                                <h3 class="upload-text">拖放文件到此处或点击上传</h3>
+                                <p class="upload-subtext">支持文本、图像、音频、视频等多种格式</p>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-folder-open"></i>
+                                    选择文件
+                                </button>
+                                <div class="file-types">
+                                    <div class="file-type">PDF/DOC/TXT</div>
+                                    <div class="file-type">JPG/PNG/GIF</div>
+                                    <div class="file-type">MP3/WAV</div>
+                                    <div class="file-type">MP4/MOV</div>
+                                    <div class="file-type">PPT/XLS</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 资源制作工具 -->
+                        <div class="tools-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-cogs"></i>
+                                资源制作工具
+                            </h2>
+                            <div class="tools-grid">
+                                <div class="tool-card" @click="switchPage('creation')">
+                                    <div class="tool-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    <h3 class="tool-title">文本生成</h3>
+                                    <p class="tool-desc">利用大模型生成教学大纲、习题、案例等文本内容</p>
+                                </div>
+                                <div class="tool-card" @click="switchPage('creation')">
+                                    <div class="tool-icon">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    <h3 class="tool-title">图像生成</h3>
+                                    <p class="tool-desc">根据描述生成教学插图、图表和示意图</p>
+                                </div>
+                                <div class="tool-card" @click="switchPage('creation')">
+                                    <div class="tool-icon">
+                                        <i class="fas fa-headphones"></i>
+                                    </div>
+                                    <h3 class="tool-title">音频合成</h3>
+                                    <p class="tool-desc">生成语音讲解、背景音乐等音频资源</p>
+                                </div>
+                                <div class="tool-card" @click="switchPage('creation')">
+                                    <div class="tool-icon">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                    <h3 class="tool-title">视频生成</h3>
+                                    <p class="tool-desc">自动生成教学讲解视频与动画</p>
+                                </div>
+                                <div class="tool-card" @click="switchPage('creation')">
+                                    <div class="tool-icon">
+                                        <i class="fas fa-film"></i>
+                                    </div>
+                                    <h3 class="tool-title">视频编辑</h3>
+                                    <p class="tool-desc">AI辅助视频剪辑与特效添加</p>
+                                </div>
+                                <div class="tool-card" @click="switchPage('courseware')">
+                                    <div class="tool-icon">
+                                        <i class="fas fa-file-powerpoint"></i>
+                                    </div>
+                                    <h3 class="tool-title">课件制作</h3>
+                                    <p class="tool-desc">一键生成完整教学课件</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 资源上传页面 -->
+                    <div v-if="currentPage === 'upload'">
+                        <h2 class="page-title">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            教学资源上传
+                        </h2>
+                        
+                        <div class="upload-section">
+                            <div class="upload-area" @click="openFileDialog">
+                                <div class="upload-icon">
+                                    <i class="fas fa-file-upload"></i>
+                                </div>
+                                <h3 class="upload-text">拖放文件到此处或点击上传</h3>
+                                <p class="upload-subtext">支持文本、图像、音频、视频等多种格式</p>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-folder-open"></i>
+                                    选择文件
+                                </button>
+                                <div class="file-types">
+                                    <div class="file-type">PDF/DOC/TXT</div>
+                                    <div class="file-type">JPG/PNG/GIF</div>
+                                    <div class="file-type">MP3/WAV</div>
+                                    <div class="file-type">MP4/MOV</div>
+                                    <div class="file-type">PPT/XLS</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title" style="margin-top: 40px;">
+                            <i class="fas fa-history"></i>
+                            最近上传
+                        </h3>
+                        
+                        <div class="resource-grid">
+                            <div class="resource-card" v-for="(item, index) in recentUploads" :key="index">
+                                <div class="resource-thumb">
+                                    <div class="resource-type">{{ item.type }}</div>
+                                </div>
+                                <div class="resource-info">
+                                    <h3 class="resource-title">{{ item.name }}</h3>
+                                    <div class="resource-meta">
+                                        <span>{{ item.date }}</span>
+                                        <span>{{ item.size }}</span>
+                                    </div>
+                                    <div class="resource-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-eye"></i> 预览
+                                        </button>
+                                        <button class="action-btn">
+                                            <i class="fas fa-trash"></i> 删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 资源制作页面 -->
+                    <div v-if="currentPage === 'creation'">
+                        <h2 class="page-title">
+                            <i class="fas fa-cogs"></i>
+                            教学资源制作
+                        </h2>
+                        
+                        <div class="tools-grid">
+                            <div class="tool-card" @click="openTool('text')">
+                                <div class="tool-icon">
+                                    <i class="fas fa-font"></i>
+                                </div>
+                                <h3 class="tool-title">文本生成</h3>
+                                <p class="tool-desc">利用大模型生成教学大纲、习题、案例等文本内容</p>
+                            </div>
+                            <div class="tool-card" @click="openTool('image')">
+                                <div class="tool-icon">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <h3 class="tool-title">图像生成</h3>
+                                <p class="tool-desc">根据描述生成教学插图、图表和示意图</p>
+                            </div>
+                            <div class="tool-card" @click="openTool('audio')">
+                                <div class="tool-icon">
+                                    <i class="fas fa-headphones"></i>
+                                </div>
+                                <h3 class="tool-title">音频合成</h3>
+                                <p class="tool-desc">生成语音讲解、背景音乐等音频资源</p>
+                            </div>
+                            <div class="tool-card" @click="openTool('video')">
+                                <div class="tool-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <h3 class="tool-title">视频生成</h3>
+                                <p class="tool-desc">自动生成教学讲解视频与动画</p>
+                            </div>
+                            <div class="tool-card" @click="openTool('edit')">
+                                <div class="tool-icon">
+                                    <i class="fas fa-film"></i>
+                                </div>
+                                <h3 class="tool-title">视频编辑</h3>
+                                <p class="tool-desc">AI辅助视频剪辑与特效添加</p>
+                            </div>
+                            <div class="tool-card" @click="switchPage('courseware')">
+                                <div class="tool-icon">
+                                    <i class="fas fa-file-powerpoint"></i>
+                                </div>
+                                <h3 class="tool-title">课件制作</h3>
+                                <p class="tool-desc">一键生成完整教学课件</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 当前工具内容区 -->
+                        <div v-if="activeTool" style="margin-top: 40px;">
+                            <h3 class="section-title">
+                                <i :class="activeTool.icon"></i>
+                                {{ activeTool.title }}
+                            </h3>
+                            
+                            <div class="tool-content" style="background-color: var(--card-bg); border-radius: 15px; padding: 25px;">
+                                <div v-if="activeTool.id === 'text'">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="5"
+                                        placeholder="请输入要生成的文本描述，例如：生成一份关于牛顿定律的高中物理练习题"
+                                        style="margin-bottom: 20px;"
+                                    ></el-input>
+                                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                        <el-select placeholder="选择难度" style="width: 150px;">
+                                            <el-option label="初级" value="easy"></el-option>
+                                            <el-option label="中级" value="medium"></el-option>
+                                            <el-option label="高级" value="hard"></el-option>
+                                        </el-select>
+                                        <el-select placeholder="选择类型" style="width: 150px;">
+                                            <el-option label="选择题" value="choice"></el-option>
+                                            <el-option label="填空题" value="fill"></el-option>
+                                            <el-option label="解答题" value="essay"></el-option>
+                                        </el-select>
+                                        <el-select placeholder="选择科目" style="width: 150px;">
+                                            <el-option label="物理" value="physics"></el-option>
+                                            <el-option label="数学" value="math"></el-option>
+                                            <el-option label="化学" value="chemistry"></el-option>
+                                        </el-select>
+                                    </div>
+                                    <el-button type="primary" icon="fas fa-magic">生成内容</el-button>
+                                </div>
+                                
+                                <div v-if="activeTool.id === 'image'">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="3"
+                                        placeholder="请输入图像描述，例如：一个展示光合作用过程的示意图，适合初中生物教学"
+                                        style="margin-bottom: 20px;"
+                                    ></el-input>
+                                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                        <el-select placeholder="选择风格" style="width: 200px;">
+                                            <el-option label="写实风格" value="realistic"></el-option>
+                                            <el-option label="卡通风格" value="cartoon"></el-option>
+                                            <el-option label="手绘风格" value="handdrawn"></el-option>
+                                        </el-select>
+                                        <el-select placeholder="选择尺寸" style="width: 150px;">
+                                            <el-option label="小 (800x600)" value="small"></el-option>
+                                            <el-option label="中 (1200x900)" value="medium"></el-option>
+                                            <el-option label="大 (1920x1080)" value="large"></el-option>
+                                        </el-select>
+                                    </div>
+                                    <el-button type="primary" icon="fas fa-paint-brush">生成图像</el-button>
+                                    <div style="margin-top: 25px; text-align: center; color: var(--gray);">
+                                        <i class="fas fa-image" style="font-size: 60px; opacity: 0.3;"></i>
+                                        <p style="margin-top: 10px;">生成的图像将显示在这里</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 资源管理页面 -->
+                    <div v-if="currentPage === 'management'">
+                        <h2 class="page-title">
+                            <i class="fas fa-boxes"></i>
+                            教学资源管理
+                        </h2>
+                        
+                        <div class="resource-filters">
+                            <button 
+                                v-for="filter in filters" 
+                                :key="filter" 
+                                class="filter-btn" 
+                                :class="{active: activeFilter === filter}"
+                                @click="activeFilter = filter"
+                            >
+                                {{ filter }}
                             </button>
                         </div>
+                        
+                        <div class="resource-grid">
+                            <div class="resource-card" v-for="(resource, index) in filteredResources" :key="index">
+                                <div class="resource-thumb">
+                                    <div class="resource-type">{{ resource.type }}</div>
+                                </div>
+                                <div class="resource-info">
+                                    <h3 class="resource-title">{{ resource.title }}</h3>
+                                    <div class="resource-meta">
+                                        <span>{{ resource.date }}</span>
+                                        <span>{{ resource.author }}</span>
+                                    </div>
+                                    <div class="resource-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-eye"></i> 预览
+                                        </button>
+                                        <button class="action-btn">
+                                            <i class="fas fa-download"></i> 下载
+                                        </button>
+                                        <button class="action-btn">
+                                            <i class="fas fa-edit"></i> 编辑
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ai-features">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-lightbulb"></i>
+
+                    <!-- 课件生成页面 -->
+                    <div v-if="currentPage === 'courseware'">
+                        <h2 class="page-title">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            智能课件生成
+                        </h2>
+                        
+                        <div class="courseware-builder">
+                            <div class="template-selector">
+                                <h3 style="margin-bottom: 15px;">课件模板</h3>
+                                <div 
+                                    v-for="template in templates" 
+                                    :key="template.id"
+                                    class="template-card"
+                                    :class="{active: activeTemplate === template.id}"
+                                    @click="activeTemplate = template.id"
+                                >
+                                    <h4>{{ template.name }}</h4>
+                                    <p>{{ template.desc }}</p>
+                                </div>
                             </div>
-                            <div class="feature-text">
-                                <h3>智能建议</h3>
-                                <p>根据课程内容推荐相关资源</p>
+                            
+                            <div class="builder-preview">
+                                <div class="preview-placeholder">
+                                    <i class="fas fa-file-powerpoint"></i>
+                                    <h3>课件预览区域</h3>
+                                    <p>选择左侧模板后，这里将显示课件预览效果</p>
+                                    <el-button type="primary" icon="fas fa-magic">生成完整课件</el-button>
+                                </div>
                             </div>
                         </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-check-circle"></i>
+                    </div>
+
+                    <!-- AI助手页面 -->
+                    <div v-if="currentPage === 'ai'">
+                        <div class="ai-assistant">
+                            <div class="ai-header">
+                                <h2 class="ai-title">AI教学助手</h2>
+                                <p class="ai-subtitle">智能问答、资源建议、内容优化，您的全天候教学助手</p>
                             </div>
-                            <div class="feature-text">
-                                <h3>内容优化</h3>
-                                <p>优化教学内容的表达与结构</p>
+                            <div class="ai-content">
+                                <div class="ai-chat">
+                                    <div class="chat-messages">
+                                        <iframe
+                                            src="http://47.120.30.18/chatbot/rTgJQMCGIdPoKIpi"
+                                            style="width: 100%; height: 100%; min-height: 700px"
+                                            frameborder="0"
+                                            allow="microphone"
+                                        ></iframe>
+                                    </div>
+                                    <div class="chat-input">
+                                        <input
+                                            type="text"
+                                            placeholder="输入您的问题或指令..."
+                                            v-model="aiInput"
+                                            @keyup.enter="sendMessage"
+                                        />
+                                        <button class="send-btn" @click="sendMessage">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="ai-features">
+                                    <div class="feature-card" @click="aiFeature('suggestion')">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div class="feature-text">
+                                            <h3>智能建议</h3>
+                                            <p>根据课程内容推荐相关资源</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-card" @click="aiFeature('optimization')">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div class="feature-text">
+                                            <h3>内容优化</h3>
+                                            <p>优化教学内容的表达与结构</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-card" @click="aiFeature('conversion')">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </div>
+                                        <div class="feature-text">
+                                            <h3>格式转换</h3>
+                                            <p>一键转换资源格式</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-card" @click="aiFeature('collaboration')">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="feature-text">
+                                            <h3>协作支持</h3>
+                                            <p>团队协作教学资源制作</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-sync-alt"></i>
-                            </div>
-                            <div class="feature-text">
-                                <h3>格式转换</h3>
-                                <p>一键转换资源格式</p>
+                    </div>
+
+                    <!-- 团队协作页面 -->
+                    <div v-if="currentPage === 'collaboration'">
+                        <h2 class="page-title">
+                            <i class="fas fa-users"></i>
+                            团队协作
+                        </h2>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+                            <el-button type="primary" icon="el-icon-plus">创建新团队</el-button>
+                            <el-input 
+                                placeholder="搜索团队或成员" 
+                                style="width: 300px;"
+                                suffix-icon="el-icon-search"
+                            ></el-input>
+                        </div>
+                        
+                        <div class="team-grid">
+                            <div class="team-card" v-for="team in teams" :key="team.id">
+                                <div class="team-header">
+                                    <div class="team-avatar">{{ team.name.charAt(0) }}</div>
+                                    <div class="team-info">
+                                        <div class="team-name">{{ team.name }}</div>
+                                        <div class="team-desc">{{ team.desc }}</div>
+                                    </div>
+                                </div>
+                                <div class="team-members">
+                                    <div class="member" v-for="(member, idx) in team.members" :key="idx">
+                                        <div class="member-avatar">{{ member.charAt(0) }}</div>
+                                        <div class="member-name">{{ member }}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-users"></i>
+                    </div>
+
+                    <!-- 系统设置页面 -->
+                    <div v-if="currentPage === 'settings'">
+                        <h2 class="page-title">
+                            <i class="fas fa-cog"></i>
+                            系统设置
+                        </h2>
+                        
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <h3><i class="fas fa-user-cog"></i> 账户设置</h3>
+                                <div class="settings-option">
+                                    <label>用户名</label>
+                                    <el-input v-model="username" style="width: 200px;"></el-input>
+                                </div>
+                                <div class="settings-option">
+                                    <label>邮箱</label>
+                                    <el-input v-model="email" style="width: 200px;"></el-input>
+                                </div>
+                                <div class="settings-option">
+                                    <label>更改密码</label>
+                                    <el-button type="text">修改</el-button>
+                                </div>
                             </div>
-                            <div class="feature-text">
-                                <h3>协作支持</h3>
-                                <p>团队协作教学资源制作</p>
+                            
+                            <div class="settings-card">
+                                <h3><i class="fas fa-bell"></i> 通知设置</h3>
+                                <div class="settings-option">
+                                    <label>系统通知</label>
+                                    <el-switch v-model="notifications.system"></el-switch>
+                                </div>
+                                <div class="settings-option">
+                                    <label>资源更新</label>
+                                    <el-switch v-model="notifications.updates"></el-switch>
+                                </div>
+                                <div class="settings-option">
+                                    <label>团队协作</label>
+                                    <el-switch v-model="notifications.collaboration"></el-switch>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-card">
+                                <h3><i class="fas fa-paint-brush"></i> 主题设置</h3>
+                                <div class="settings-option">
+                                    <label>主题模式</label>
+                                    <el-select v-model="theme" style="width: 150px;">
+                                        <el-option label="深色模式" value="dark"></el-option>
+                                        <el-option label="浅色模式" value="light"></el-option>
+                                    </el-select>
+                                </div>
+                                <div class="settings-option">
+                                    <label>主色调</label>
+                                    <el-color-picker v-model="primaryColor"></el-color-picker>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-card">
+                                <h3><i class="fas fa-plug"></i> 模型设置</h3>
+                                <div class="settings-option">
+                                    <label>文本生成模型</label>
+                                    <el-select v-model="textModel" style="width: 200px;">
+                                        <el-option label="GPT-4" value="gpt4"></el-option>
+                                        <el-option label="Claude 2" value="claude2"></el-option>
+                                        <el-option label="文心一言" value="wenxin"></el-option>
+                                    </el-select>
+                                </div>
+                                <div class="settings-option">
+                                    <label>图像生成模型</label>
+                                    <el-select v-model="imageModel" style="width: 200px;">
+                                        <el-option label="DALL-E 3" value="dalle3"></el-option>
+                                        <el-option label="Stable Diffusion" value="sd"></el-option>
+                                        <el-option label="Midjourney" value="midjourney"></el-option>
+                                    </el-select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1052,92 +1560,134 @@
     </div>
 
     <script>
-        // 上传区域交互效果
-        const uploadArea = document.getElementById('uploadArea');
-        
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            alert('文件已上传！');
-        });
-        
-        uploadArea.addEventListener('click', () => {
-            alert('打开文件选择器');
-        });
-        
-        // 导航项激活状态
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                navItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        
-        // 过滤按钮激活状态
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        
-        // 工具卡片悬停效果
-        const toolCards = document.querySelectorAll('.tool-card');
-        toolCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-        
-        // 模拟AI助手发送消息
-        const sendBtn = document.querySelector('.send-btn');
-        const chatInput = document.querySelector('.chat-input input');
-        const chatMessages = document.querySelector('.chat-messages');
-        
-        sendBtn.addEventListener('click', function() {
-            if (chatInput.value.trim() !== '') {
-                // 添加用户消息
-                const userMessage = document.createElement('div');
-                userMessage.classList.add('message', 'user');
-                userMessage.textContent = chatInput.value;
-                chatMessages.appendChild(userMessage);
-                
-                // 模拟AI回复
-                setTimeout(() => {
-                    const aiMessage = document.createElement('div');
-                    aiMessage.classList.add('message', 'ai');
-                    aiMessage.innerHTML = `我已经收到您的请求："${chatInput.value}"。正在处理中，请稍候...`;
-                    chatMessages.appendChild(aiMessage);
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    currentPage: 'dashboard',
+                    activeMenu: 'dashboard',
+                    activeFilter: '全部',
+                    activeTemplate: 'edu',
+                    activeTool: null,
+                    aiInput: '',
+                    username: '张老师',
+                    email: 'zhang@example.com',
+                    theme: 'dark',
+                    primaryColor: '#3498db',
+                    textModel: 'gpt4',
+                    imageModel: 'dalle3',
+                    notifications: {
+                        system: true,
+                        updates: true,
+                        collaboration: true
+                    },
+                    searchPlaceholder: '搜索教学资源...',
+                    filters: ['全部', '文本', '图像', '音频', '视频', '课件', '最近使用'],
+                    resources: [
+                        { title: '初中物理 - 力学基础课件', type: '课件', date: '2023-10-15', author: '张老师' },
+                        { title: '化学实验 - 酸碱中和反应演示', type: '视频', date: '2023-10-12', author: '李老师' },
+                        { title: '高中数学 - 三角函数练习题', type: '习题集', date: '2023-10-10', author: '王老师' },
+                        { title: '英语语法 - 时态讲解PPT', type: '课件', date: '2023-10-08', author: '赵老师' },
+                        { title: '生物细胞结构图解', type: '图像', date: '2023-10-05', author: '张老师' },
+                        { title: '世界历史 - 文艺复兴时期', type: '文本', date: '2023-10-01', author: '刘老师' }
+                    ],
+                    recentUploads: [
+                        { name: '物理实验指导手册.pdf', type: '文档', date: '2023-10-20', size: '2.4MB' },
+                        { name: '化学分子结构图集.zip', type: '图像', date: '2023-10-19', size: '15.7MB' },
+                        { name: '英语听力训练.mp3', type: '音频', date: '2023-10-18', size: '8.2MB' }
+                    ],
+                    templates: [
+                        { id: 'edu', name: '教育标准模板', desc: '标准教育课件布局' },
+                        { id: 'minimal', name: '简约风格', desc: '简洁清晰的布局' },
+                        { id: 'interactive', name: '互动课件', desc: '适合课堂互动的设计' },
+                        { id: 'science', name: '科学主题', desc: '适合理科教学内容' },
+                        { id: 'art', name: '艺术主题', desc: '适合文科和艺术类' }
+                    ],
+                    teams: [
+                        { 
+                            id: 1, 
+                            name: '物理教研组', 
+                            desc: '初中物理教学资源开发', 
+                            members: ['张老师', '王老师', '李老师', '赵老师'] 
+                        },
+                        { 
+                            id: 2, 
+                            name: '数学竞赛组', 
+                            desc: '高中数学竞赛培训', 
+                            members: ['刘老师', '陈老师', '周老师'] 
+                        },
+                        { 
+                            id: 3, 
+                            name: '英语教学组', 
+                            desc: '高中英语教学资源', 
+                            members: ['孙老师', '吴老师', '郑老师'] 
+                        }
+                    ],
+                    tools: [
+                        { id: 'text', title: '文本生成', icon: 'fas fa-font' },
+                        { id: 'image', title: '图像生成', icon: 'fas fa-image' },
+                        { id: 'audio', title: '音频合成', icon: 'fas fa-headphones' },
+                        { id: 'video', title: '视频生成', icon: 'fas fa-video' },
+                        { id: 'edit', title: '视频编辑', icon: 'fas fa-film' }
+                    ]
+                };
+            },
+            computed: {
+                filteredResources() {
+                    if (this.activeFilter === '全部') {
+                        return this.resources;
+                    }
+                    return this.resources.filter(r => r.type === this.activeFilter);
+                }
+            },
+            methods: {
+                handleMenuSelect(index) {
+                    this.currentPage = index;
+                    this.activeMenu = index;
+                    this.activeTool = null;
                     
-                    // 滚动到底部
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 500);
-                
-                // 清空输入框
-                chatInput.value = '';
-            }
-        });
-        
-        // 支持按回车发送消息
-        chatInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendBtn.click();
+                    // 根据页面更新搜索框提示
+                    const placeholders = {
+                        dashboard: '搜索教学资源...',
+                        upload: '搜索上传的文件...',
+                        creation: '搜索工具或资源...',
+                        management: '搜索教学资源...',
+                        courseware: '搜索课件模板...',
+                        ai: '向AI助手提问...',
+                        collaboration: '搜索团队或成员...',
+                        settings: '搜索设置选项...'
+                    };
+                    this.searchPlaceholder = placeholders[index] || '搜索...';
+                },
+                switchPage(page) {
+                    this.currentPage = page;
+                    this.activeMenu = page;
+                },
+                openTool(toolId) {
+                    this.activeTool = this.tools.find(t => t.id === toolId);
+                },
+                sendMessage() {
+                        if (this.aiInput.trim() === '') return;
+                        
+                        // 将消息传递给 iframe 中的内容
+                        const iframe = document.querySelector('.ai-chat iframe');
+                        iframe.contentWindow.postMessage(this.aiInput, '*');
+                        
+                        this.aiInput = '';
+                    },
+                aiFeature(feature) {
+                    this.switchPage('ai');
+                    const features = {
+                        suggestion: '智能建议',
+                        optimization: '内容优化',
+                        conversion: '格式转换',
+                        collaboration: '协作支持'
+                    };
+                    this.aiInput = `请使用${features[feature]}功能：`;
+                },
+                openFileDialog() {
+                    alert('文件选择对话框已打开');
+                }
             }
         });
     </script>
