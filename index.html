@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>智教多模态 - 教学资源制作系统</title>
+		<!-- 引入Element UI样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<!-- 引入Vue和Element UI -->
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+		<!-- 引入Font Awesome -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<!-- 引入 KaTeX 样式 -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+		<!-- Dify 聊天机器人配置 -->
+		<script>
+			window.difyChatbotConfig = {
+			 token: 'kxQco2v1TEL2pwHD',
+			 baseUrl: 'http://47.120.30.18:8099',
+			 systemVariables: {
+			   // user_id: 'YOU CAN DEFINE USER ID HERE',
+			   // conversation_id: 'YOU CAN DEFINE CONVERSATION ID HERE, IT MUST BE A VALID UUID',
+			 },
+			 userVariables: {
+			   // avatar_url: 'YOU CAN DEFINE USER AVATAR URL HERE',
+			   // name: 'YOU CAN DEFINE USER NAME HERE',
+			 },
+			}
+		   </script>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			}
+
+			:root {
+				--primary: #3498db;
+				--primary-dark: #2980b9;
+				--secondary: #2c3e50;
+				--accent: #1abc9c;
+				--light: #ecf0f1;
+				--dark: #2c3e50;
+				--success: #2ecc71;
+				--warning: #f39c12;
+				--danger: #e74c3c;
+				--gray: #7f8c8d;
+				--bg-dark: #1a2530;
+				--card-bg: #243342;
+				--border: #34495e;
+				--shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+				--transition: all 0.3s ease;
+			}
+
+			body {
+				background: linear-gradient(135deg, var(--bg-dark), #0d1a26);
+				color: var(--light);
+				min-height: 100vh;
+				overflow-x: hidden;
+			}
+
+			/* 布局基础样式 */
+			.app-container {
+				display: flex;
+				min-height: 100vh;
+			}
+
+			.main-content {
+				flex: 1;
+				margin-left: 250px;
+				padding: 20px;
+				transition: var(--transition);
+			}
+
+			/* 侧边导航样式 */
+			.el-menu-custom {
+				width: 250px;
+				  background-color: rgba(26, 37, 48, 0.9) !important;
+				  border-right: 1px solid var(--border) !important;
+				  height: 100vh;
+				  position: fixed;
+				  z-index: 100;
+				  transition: all 0.3s ease;
+				  overflow-y: auto; /* 添加这一行，允许菜单滚动 */
+			}
+
+			.logo {
+				display: flex;
+				align-items: center;
+				padding: 20px;
+				border-bottom: 1px solid var(--border);
+				background-color: rgba(26, 37, 48, 0.95);
+			}
+
+			.logo-icon {
+				font-size: 28px;
+				color: var(--accent);
+				margin-right: 15px;
+			}
+
+			.logo-text {
+				font-size: 24px;
+				font-weight: 700;
+				background: linear-gradient(90deg, var(--primary), var(--accent));
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+
+			.el-menu-item-custom {
+				display: flex;
+				align-items: center;
+				padding: 0 25px !important;
+				height: 60px !important;
+				border-left: 3px solid transparent !important;
+				transition: var(--transition);
+			}
+
+			.el-menu-item-custom i {
+				font-size: 20px !important;
+				width: 30px !important;
+				margin-right: 15px !important;
+			}
+
+			.el-menu-item-custom:hover,
+			.el-menu-item-custom.is-active {
+				background-color: rgba(52, 73, 94, 0.5) !important;
+				border-left: 3px solid var(--accent) !important;
+				color: white !important;
+			}
+
+			/* 顶部栏样式 */
+			.topbar {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 15px 20px;
+				background-color: rgba(36, 51, 66, 0.8);
+				border-radius: 12px;
+				margin-bottom: 25px;
+				backdrop-filter: blur(10px);
+				box-shadow: var(--shadow);
+			}
+
+			.search-bar {
+				position: relative;
+				flex: 1;
+				max-width: 500px;
+				margin-left: 20px;
+			}
+
+			.search-bar input {
+				width: 100%;
+				padding: 12px 20px 12px 45px;
+				border-radius: 50px;
+				border: 1px solid var(--border);
+				background-color: var(--card-bg);
+				color: var(--light);
+				font-size: 16px;
+				outline: none;
+				transition: var(--transition);
+			}
+
+			.search-bar input:focus {
+				border-color: var(--primary);
+				box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+			}
+
+			.search-bar i {
+				position: absolute;
+				left: 20px;
+				top: 50%;
+				transform: translateY(-50%);
+				color: var(--gray);
+			}
+
+			.user-actions {
+				display: flex;
+				align-items: center;
+				gap: 20px;
+			}
+
+			.action-icon {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: var(--card-bg);
+				color: var(--light);
+				cursor: pointer;
+				transition: var(--transition);
+				position: relative;
+			}
+
+			.action-icon:hover {
+				background-color: var(--primary);
+				transform: translateY(-2px);
+			}
+
+			.notification-badge {
+				position: absolute;
+				top: -5px;
+				right: -5px;
+				background-color: var(--danger);
+				color: white;
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				font-size: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.user-profile {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				cursor: pointer;
+			}
+
+			.user-avatar {
+				width: 45px;
+				height: 45px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, var(--primary), var(--accent));
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: bold;
+				font-size: 18px;
+			}
+
+			.user-name {
+				font-weight: 600;
+			}
+
+			/* 仪表板样式 */
+			.dashboard {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 20px;
+				margin-bottom: 30px;
+			}
+
+			.card {
+				background-color: var(--card-bg);
+				border-radius: 15px;
+				padding: 25px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+				transition: var(--transition);
+				position: relative;
+				overflow: hidden;
+			}
+
+			.card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+			}
+
+			.card::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 4px;
+				background: linear-gradient(90deg, var(--primary), var(--accent));
+			}
+
+			.card-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+			}
+
+			.card-title {
+				font-size: 20px;
+				font-weight: 600;
+			}
+
+			.card-icon {
+				width: 50px;
+				height: 50px;
+				border-radius: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 24px;
+				background: rgba(52, 152, 219, 0.1);
+				color: var(--primary);
+			}
+
+			.card-stats {
+				font-size: 32px;
+				font-weight: 700;
+				margin-bottom: 10px;
+				background: linear-gradient(90deg, var(--primary), var(--accent));
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+
+			.card-desc {
+				color: var(--gray);
+				font-size: 15px;
+				line-height: 1.5;
+			}
+
+			/* 上传区域样式 */
+			.upload-section {
+				margin-bottom: 30px;
+			}
+
+			.section-title {
+				font-size: 22px;
+				margin-bottom: 20px;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
+
+			.section-title i {
+				color: var(--accent);
+			}
+
+			.upload-area {
+				border: 2px dashed var(--border);
+				border-radius: 15px;
+				padding: 40px;
+				text-align: center;
+				transition: var(--transition);
+				cursor: pointer;
+				background-color: rgba(52, 73, 94, 0.2);
+			}
+
+			.upload-area:hover,
+			.upload-area.dragover {
+				border-color: var(--primary);
+				background-color: rgba(52, 152, 219, 0.1);
+			}
+
+			.upload-icon {
+				font-size: 50px;
+				color: var(--primary);
+				margin-bottom: 20px;
+			}
+
+			.upload-text {
+				font-size: 18px;
+				margin-bottom: 15px;
+			}
+
+			.upload-subtext {
+				color: var(--gray);
+				margin-bottom: 20px;
+			}
+
+			.btn {
+				padding: 12px 25px;
+				border-radius: 8px;
+				border: none;
+				font-weight: 600;
+				font-size: 16px;
+				cursor: pointer;
+				transition: var(--transition);
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+			}
+
+			.btn-primary {
+				background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+				color: white;
+			}
+
+			.btn-primary:hover {
+				background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+				transform: translateY(-2px);
+				box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+			}
+
+			.file-types {
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 15px;
+				margin-top: 20px;
+			}
+
+			.file-type {
+				background-color: rgba(26, 188, 156, 0.1);
+				color: var(--accent);
+				padding: 8px 15px;
+				border-radius: 20px;
+				font-size: 14px;
+			}
+
+			/* 工具卡片样式 */
+			.tools-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 20px;
+				margin-bottom: 30px;
+			}
+
+			.tool-card {
+				background-color: var(--card-bg);
+				border-radius: 12px;
+				padding: 25px;
+				text-align: center;
+				transition: var(--transition);
+				cursor: pointer;
+			}
+
+			.tool-card:hover {
+				transform: translateY(-5px);
+				background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(26, 188, 156, 0.1));
+			}
+
+			.tool-icon {
+				font-size: 40px;
+				margin-bottom: 20px;
+				color: var(--primary);
+			}
+
+			.tool-title {
+				font-size: 18px;
+				font-weight: 600;
+				margin-bottom: 10px;
+			}
+
+			.tool-desc {
+				color: var(--gray);
+				font-size: 14px;
+				line-height: 1.5;
+			}
+
+			/* 资源管理样式 */
+			.resource-filters {
+				display: flex;
+				gap: 15px;
+				margin-bottom: 20px;
+				flex-wrap: wrap;
+			}
+
+			.filter-btn {
+				padding: 10px 20px;
+				border-radius: 30px;
+				background-color: var(--card-bg);
+				border: 1px solid var(--border);
+				color: var(--light);
+				cursor: pointer;
+				transition: var(--transition);
+			}
+
+			.filter-btn:hover,
+			.filter-btn.active {
+				background: linear-gradient(135deg, var(--primary), var(--accent));
+				border-color: transparent;
+			}
+
+			.resource-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 25px;
+			}
+
+			.resource-card {
+				background-color: var(--card-bg);
+				border-radius: 15px;
+				overflow: hidden;
+				transition: var(--transition);
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+			}
+
+			.resource-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+			}
+
+			.resource-thumb {
+				height: 180px;
+				width: 100%;
+				background: linear-gradient(135deg, #3498db, #2c3e50);
+				position: relative;
+				overflow: hidden;
+			}
+
+			.resource-type {
+				position: absolute;
+				top: 15px;
+				right: 15px;
+				background-color: rgba(26, 188, 156, 0.9);
+				color: white;
+				padding: 5px 15px;
+				border-radius: 20px;
+				font-size: 12px;
+				font-weight: 600;
+			}
+
+			.resource-info {
+				padding: 20px;
+			}
+
+			.resource-title {
+				font-size: 18px;
+				font-weight: 600;
+				margin-bottom: 10px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.resource-meta {
+				display: flex;
+				justify-content: space-between;
+				color: var(--gray);
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+
+			.resource-actions {
+				display: flex;
+				gap: 10px;
+			}
+
+			.action-btn {
+				flex: 1;
+				padding: 8px;
+				border-radius: 8px;
+				background-color: rgba(52, 73, 94, 0.5);
+				border: none;
+				color: var(--light);
+				cursor: pointer;
+				transition: var(--transition);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 5px;
+			}
+
+			.action-btn:hover {
+				background-color: var(--primary);
+			}
+
+			/* AI助手样式 */
+			.ai-assistant {
+				background: linear-gradient(135deg, #1a2530, #2c3e50);
+				border-radius: 15px;
+				padding: 25px;
+				margin-top: 30px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.ai-header {
+				text-align: center;
+				margin-bottom: 25px;
+			}
+
+			.ai-title {
+				font-size: 24px;
+				margin-bottom: 10px;
+				background: linear-gradient(90deg, var(--accent), var(--primary));
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				font-weight: bold;
+			}
+
+			.ai-subtitle {
+				color: var(--gray);
+				max-width: 600px;
+				line-height: 1.5;
+			}
+
+			.ai-content {
+				display: flex;
+				width: 100%;
+				gap: 30px;
+			}
+
+			.ai-chat {
+				flex: 1;
+				background-color: var(--card-bg);
+				border-radius: 15px;
+				padding: 20px;
+				height: 500px;
+				display: flex;
+				flex-direction: column;
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			}
+
+			.chat-header {
+				padding: 15px;
+				background: linear-gradient(90deg, var(--primary), var(--accent));
+				color: white;
+				text-align: center;
+				border-top-left-radius: 15px;
+				border-top-right-radius: 15px;
+				font-size: 1.2em;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				font-weight: bold;
+			}
+
+			.header-title {
+				flex-grow: 1;
+				text-align: center;
+			}
+
+			.file-info {
+				font-size: 0.8em;
+				background-color: rgba(255, 255, 255, 0.2);
+				padding: 2px 8px;
+				border-radius: 10px;
+				max-width: 40%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				margin-right: 10px;
+			}
+
+			.chat-messages {
+				flex: 1;
+				padding: 20px;
+				overflow-y: auto;
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 15px;
+				padding-right: 10px;
+			}
+
+			.message {
+				max-width: 85%;
+				padding: 12px 16px;
+				margin-bottom: 15px;
+				border-radius: 18px;
+				line-height: 1.6;
+				position: relative;
+				word-wrap: break-word;
+				animation: fadeIn 0.3s ease-in-out;
+			}
+
+			.user-message {
+				align-self: flex-end;
+				background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+				color: white;
+				border-bottom-right-radius: 4px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			.bot-message {
+				align-self: flex-start;
+				background-color: var(--bg-dark);
+				color: var(--light);
+				border: 1px solid var(--border);
+				border-bottom-left-radius: 4px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			.message-content {
+				white-space: pre-wrap;
+			}
+
+			.message-content h1,
+			.message-content h2,
+			.message-content h3 {
+				margin-top: 0.75em;
+				margin-bottom: 0.5em;
+				color: var(--light);
+			}
+
+			.message-content p {
+				margin-top: 0.5em;
+				margin-bottom: 0.5em;
+			}
+
+			.message-content pre {
+				background-color: var(--card-bg);
+				padding: 12px;
+				border-radius: 5px;
+				overflow-x: auto;
+				margin-top: 0.75em;
+				margin-bottom: 0.75em;
+				border: 1px solid var(--border);
+			}
+
+			.message-content code {
+				background-color: var(--card-bg);
+				padding: 2px 4px;
+				border-radius: 3px;
+				font-family: "Courier New", monospace;
+				font-size: 0.95em;
+			}
+
+			.message-content pre code {
+				background-color: transparent;
+				padding: 0;
+				font-size: 0.95em;
+			}
+
+			.message-content ul,
+			.message-content ol {
+				padding-left: 20px;
+				margin-top: 0.5em;
+				margin-bottom: 0.5em;
+			}
+
+			.message-content li {
+				margin-bottom: 0.25em;
+			}
+
+			.message-content blockquote {
+				border-left: 4px solid var(--primary);
+				padding-left: 15px;
+				margin-left: 0;
+				margin-right: 0;
+				background-color: rgba(52, 152, 219, 0.1);
+				padding-top: 5px;
+				padding-bottom: 5px;
+				margin-top: 0.75em;
+				margin-bottom: 0.75em;
+			}
+
+			.message-content table {
+				border-collapse: collapse;
+				width: 100%;
+				margin-top: 0.75em;
+				margin-bottom: 0.75em;
+				display: block;
+				overflow-x: auto;
+			}
+
+			.message-content th,
+			.message-content td {
+				border: 1px solid var(--border);
+				padding: 8px;
+				text-align: left;
+			}
+
+			.message-content th {
+				background-color: var(--card-bg);
+				font-weight: bold;
+			}
+
+			.message-content tr:nth-child(even) {
+				background-color: var(--bg-dark);
+			}
+
+			.message-content a {
+				color: var(--primary);
+				text-decoration: none;
+				border-bottom: 1px dotted var(--primary);
+			}
+
+			.message-content a:hover {
+				color: #3a7bff;
+				border-bottom: 1px solid #3a7bff;
+			}
+
+			.chat-input-container {
+				display: flex;
+				padding: 15px;
+				border-top: 1px solid var(--border);
+				align-items: center;
+				background-color: rgba(36, 51, 66, 0.5);
+				border-bottom-left-radius: 15px;
+				border-bottom-right-radius: 15px;
+			}
+
+			.ai-input {
+				flex: 1;
+				padding: 12px 15px;
+				padding-left: 40px;
+				border: 1px solid var(--border);
+				border-radius: 20px;
+				outline: none;
+				font-size: 16px;
+				background-color: var(--bg-dark);
+				color: var(--light);
+				transition: var(--transition);
+			}
+
+			.ai-input:focus {
+				border-color: var(--primary);
+				box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+			}
+
+			.input-icons {
+				position: relative;
+				display: flex;
+				align-items: center;
+			}
+
+			.icon-button {
+				background: none;
+				border: none;
+				cursor: pointer;
+				font-size: 1.2em;
+				color: var(--gray);
+				position: absolute;
+				left: 12px;
+				z-index: 1;
+				padding: 5px;
+				border-radius: 50%;
+				transition: var(--transition);
+			}
+
+			.icon-button:hover {
+				background-color: var(--card-bg);
+				color: var(--primary);
+			}
+
+			.ai-send-button,
+			.ai-cancel-button {
+				margin-left: 10px;
+				padding: 12px 20px;
+				border: none;
+				border-radius: 20px;
+				cursor: pointer;
+				font-size: 16px;
+				font-weight: 600;
+				transition: var(--transition);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.ai-send-button {
+				background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+				color: white;
+				min-width: 80px;
+			}
+
+			.ai-send-button:hover {
+				background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+				transform: translateY(-2px);
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			}
+
+			.ai-send-button:disabled {
+				background: var(--gray);
+				cursor: not-allowed;
+				transform: none;
+				box-shadow: none;
+			}
+
+			.ai-cancel-button {
+				background: linear-gradient(135deg, var(--danger), #c0392b);
+				color: white;
+				min-width: 80px;
+			}
+
+			.ai-cancel-button:hover {
+				background: linear-gradient(135deg, #c0392b, var(--danger));
+				transform: translateY(-2px);
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			}
+
+			.typing-indicator {
+				align-self: flex-start;
+				background-color: var(--bg-dark);
+				color: var(--gray);
+				padding: 12px 16px;
+				margin-bottom: 15px;
+				border-radius: 18px;
+				border: 1px solid var(--border);
+				border-bottom-left-radius: 4px;
+				display: none;
+				align-items: center;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+
+			.typing-text {
+				display: inline-block;
+				margin-right: 8px;
+				font-size: 14px;
+			}
+
+			.typing-dots {
+				display: inline-block;
+				width: 24px;
+				height: 20px;
+				position: relative;
+			}
+
+			.typing-dots span {
+				display: inline-block;
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background-color: var(--light);
+				margin-right: 4px;
+				animation: typing 1.4s infinite ease-in-out;
+			}
+
+			.typing-dots span:nth-child(1) {
+				animation-delay: 0s;
+			}
+
+			.typing-dots span:nth-child(2) {
+				animation-delay: 0.2s;
+			}
+
+			.typing-dots span:nth-child(3) {
+				animation-delay: 0.4s;
+				margin-right: 0;
+			}
+
+			.file-upload-preview {
+				display: flex;
+				align-items: center;
+				padding: 5px 10px;
+				background-color: var(--card-bg);
+				border-radius: 15px;
+				margin-top: 5px;
+				font-size: 0.9em;
+				max-width: 90%;
+			}
+
+			.file-upload-preview span {
+				margin-right: 8px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.remove-file {
+				background: none;
+				border: none;
+				color: var(--gray);
+				cursor: pointer;
+				font-size: 1.2em;
+				line-height: 1;
+			}
+
+			.remove-file:hover {
+				color: var(--danger);
+			}
+
+			.ai-features {
+				width: 300px;
+			}
+
+			.feature-card {
+				background-color: var(--card-bg);
+				border-radius: 12px;
+				padding: 20px;
+				margin-bottom: 15px;
+				display: flex;
+				align-items: center;
+				gap: 15px;
+				transition: var(--transition);
+				cursor: pointer;
+				box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+			}
+
+			.feature-card:hover {
+				background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(26, 188, 156, 0.1));
+				transform: translateX(5px);
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			}
+
+			.feature-icon {
+				width: 45px;
+				height: 45px;
+				border-radius: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: rgba(52, 152, 219, 0.1);
+				color: var(--primary);
+				font-size: 20px;
+				transition: var(--transition);
+			}
+
+			.feature-card:hover .feature-icon {
+				background: rgba(52, 152, 219, 0.2);
+				transform: scale(1.1);
+			}
+
+			.feature-text h3 {
+				font-size: 16px;
+				margin-bottom: 5px;
+				color: var(--light);
+			}
+
+			.feature-text p {
+				color: var(--gray);
+				font-size: 14px;
+				line-height: 1.4;
+			}
+
+			/* 设置页面样式 */
+			.settings-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 20px;
+			}
+
+			.settings-card {
+				background-color: var(--card-bg);
+				border-radius: 15px;
+				padding: 25px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+				transition: var(--transition);
+			}
+
+			.settings-card h3 {
+				margin-bottom: 15px;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
+
+			.settings-card h3 i {
+				color: var(--primary);
+			}
+
+			.settings-option {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 12px 0;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			}
+
+			.settings-option:last-child {
+				border-bottom: none;
+			}
+
+			.settings-option label {
+				cursor: pointer;
+			}
+
+			/* 团队协作页面 */
+			.team-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 25px;
+			}
+
+			.team-card {
+				background-color: var(--card-bg);
+				border-radius: 15px;
+				overflow: hidden;
+				transition: var(--transition);
+			}
+
+			.team-header {
+				padding: 20px;
+				background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+				display: flex;
+				align-items: center;
+				gap: 15px;
+			}
+
+			.team-avatar {
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				background: white;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: bold;
+				font-size: 20px;
+				color: var(--primary);
+			}
+
+			.team-info {
+				flex: 1;
+			}
+
+			.team-name {
+				font-size: 18px;
+				font-weight: 600;
+			}
+
+			.team-desc {
+				font-size: 14px;
+				opacity: 0.9;
+			}
+
+			.team-members {
+				padding: 15px 20px;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+			}
+
+			.member {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.member-avatar {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, var(--accent), #16a085);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				font-weight: bold;
+				font-size: 16px;
+				margin-bottom: 5px;
+			}
+
+			.member-name {
+				font-size: 12px;
+			}
+
+			/* 课件生成页面 */
+			.courseware-builder {
+				display: flex;
+				gap: 20px;
+			}
+
+			.input-panel {
+				width: 40%;
+				background-color: var(--card-bg);
+				border-radius: 12px;
+				padding: 20px;
+			}
+
+			.input-panel h3 {
+				margin-bottom: 15px;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
+
+			.input-panel h3 i {
+				color: var(--accent);
+			}
+
+			.input-field {
+				margin-bottom: 20px;
+			}
+
+			.input-field textarea {
+				width: 100%;
+				min-height: 180px;
+				padding: 15px;
+				border-radius: 10px;
+				background-color: rgba(36, 51, 66, 0.7);
+				border: 1px solid var(--border);
+				color: var(--light);
+				font-size: 16px;
+				resize: vertical;
+			}
+
+			.input-field textarea:focus {
+				border-color: var(--primary);
+				outline: none;
+			}
+
+			.input-field .hint {
+				margin-top: 8px;
+				color: var(--gray);
+				font-size: 14px;
+			}
+
+			.generate-btn {
+				width: 100%;
+				padding: 15px;
+				background: linear-gradient(135deg, var(--primary), var(--accent));
+				color: white;
+				border: none;
+				border-radius: 8px;
+				font-size: 16px;
+				font-weight: 600;
+				cursor: pointer;
+				transition: var(--transition);
+			}
+
+			.generate-btn:hover {
+				background: linear-gradient(135deg, var(--accent), #16a085);
+				transform: translateY(-2px);
+			}
+
+			.generate-btn:disabled {
+				background: var(--gray);
+				cursor: not-allowed;
+				transform: none;
+			}
+
+			.output-panel {
+				width: 60%;
+				background-color: var(--card-bg);
+				border-radius: 12px;
+				padding: 20px;
+			}
+
+			.output-content {
+				background-color: rgba(36, 51, 66, 0.7);
+				border-radius: 10px;
+				padding: 20px;
+				min-height: 350px;
+				max-height: 500px;
+				overflow-y: auto;
+				border: 1px solid var(--border);
+				white-space: pre-wrap;
+			}
+
+			.placeholder-text {
+				color: var(--gray);
+				text-align: center;
+				padding: 40px 0;
+			}
+
+			.processing {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 350px;
+				color: var(--accent);
+			}
+
+			.spinner {
+				width: 50px;
+				height: 50px;
+				border: 5px solid rgba(26, 188, 156, 0.3);
+				border-top: 5px solid var(--accent);
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+			}
+
+			/* 页面内容通用样式 */
+			.page-content {
+				animation: fadeIn 0.5s ease;
+			}
+
+			.page-title {
+				font-size: 24px;
+				margin-bottom: 20px;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding-bottom: 15px;
+				border-bottom: 1px solid var(--border);
+			}
+
+			.page-title i {
+				color: var(--accent);
+			}
+
+			/* 动画定义 */
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: translateY(20px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			@keyframes typing {
+				0%, 60%, 100% { transform: translateY(0); }
+				30% { transform: translateY(-5px); }
+			}
+
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+
+			/* 打字机效果 */
+			.typing-cursor {
+				display: inline-block;
+				width: 8px;
+				height: 1.2em;
+				background-color: var(--light);
+				vertical-align: middle;
+				margin-left: 2px;
+				animation: blink 1s infinite;
+			}
+
+			@keyframes blink {
+				0%, 100% { opacity: 1; }
+				50% { opacity: 0; }
+			}
+
+			/* 消息时间戳 */
+			.message-time {
+				font-size: 0.7em;
+				color: var(--gray);
+				margin-top: 5px;
+				text-align: right;
+			}
+
+			.bot-message .message-time {
+				text-align: left;
+			}
+
+			/* 响应式设计 */
+			@media (max-width: 992px) {
+				
+				.el-menu-custom {
+				    width: 80px;
+				    overflow-y: auto; /* 确保响应式视图下也能滚动 */
+				  }
+				  
+				.el-menu-custom {
+					width: 80px;
+				}
+
+				.logo-text {
+					display: none;
+				}
+
+				.logo {
+					justify-content: center;
+					padding: 20px 0;
+				}
+
+				.el-menu-item-custom {
+					justify-content: center;
+					padding: 0 !important;
+				}
+
+				.el-menu-item-custom i {
+					margin-right: 0 !important;
+				}
+
+				.el-menu-item-custom span {
+					display: none;
+				}
+
+				.main-content {
+				  flex: 1;
+				  margin-left: 250px;
+				  padding: 20px;
+				  position: relative; /* 添加相对定位，避免内容覆盖侧边栏 */
+				  z-index: 10; /* 低于侧边栏的z-index，确保侧边栏在上方 */
+				}
+			}
+
+			@media (max-width: 768px) {
+				.dashboard {
+					grid-template-columns: 1fr;
+				}
+
+				.ai-content {
+					flex-direction: column;
+				}
+
+				.ai-features {
+					width: 100%;
+					margin-top: 20px;
+				}
+
+				.topbar {
+					flex-direction: column;
+					gap: 15px;
+					align-items: flex-start;
+				}
+
+				.search-bar {
+					max-width: 100%;
+					margin-left: 0;
+				}
+
+				.user-actions {
+					width: 100%;
+					justify-content: space-between;
+				}
+
+				.courseware-builder {
+					flex-direction: column;
+				}
+
+				.input-panel,
+				.output-panel {
+					width: 100%;
+				}
+			}
+			/* Dify 聊天机器人样式 */
+			#dify-chatbot-bubble-button {
+			  background-color: #1C64F2 !important;
+			}
+			#dify-chatbot-bubble-window {
+			  width: 24rem !important;
+			  height: 40rem !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="app-container">
+				<!-- 侧边导航 - 使用Element UI菜单 -->
+				<el-menu class="el-menu-custom" :default-active="activeMenu" @select="handleMenuSelect">
+					<div class="logo">
+						<div class="logo-icon">
+							<i class="fas fa-brain"></i>
+						</div>
+						<div class="logo-text">智教多模态</div>
+					</div>
+					<el-menu-item index="dashboard" class="el-menu-item-custom">
+						<i class="fas fa-home"></i>
+						<span>控制面板</span>
+					</el-menu-item>
+					<el-menu-item index="upload" class="el-menu-item-custom">
+						<i class="fas fa-cloud-upload-alt"></i>
+						<span>资源上传</span>
+					</el-menu-item>
+					<el-menu-item index="creation" class="el-menu-item-custom">
+						<i class="fas fa-cogs"></i>
+						<span>资源制作</span>
+					</el-menu-item>
+					<el-menu-item index="courseware" class="el-menu-item-custom">
+						<i class="fas fa-chalkboard-teacher"></i>
+						<span>课件生成</span>
+					</el-menu-item>
+					<el-menu-item index="ai" class="el-menu-item-custom">
+						<i class="fas fa-robot"></i>
+						<span>AI助手</span>
+					</el-menu-item>
+					<!-- <el-menu-item index="collaboration" class="el-menu-item-custom">
+						<i class="fas fa-users"></i>
+						<span>团队协作</span>
+					</el-menu-item>
+					<el-menu-item index="settings" class="el-menu-item-custom">
+						<i class="fas fa-cog"></i>
+						<span>系统设置</span>
+					</el-menu-item> -->
+				</el-menu>
+
+				<!-- 主内容区 -->
+				<div class="main-content">
+					<!-- 顶部栏 -->
+					<div class="topbar">
+						<div class="search-bar">
+							<i class="fas fa-search"></i>
+							<input type="text" :placeholder="searchPlaceholder">
+						</div>
+						<div class="user-actions">
+							<div class="action-icon">
+								<i class="fas fa-bell"></i>
+								<span class="notification-badge">3</span>
+							</div>
+							<div class="action-icon">
+								<i class="fas fa-envelope"></i>
+							</div>
+							<div class="user-profile" @click="userMenuVisible = true">
+								<div class="user-avatar">张</div>
+								<div class="user-name">张老师</div>
+								<i class="fas fa-chevron-down"></i>
+							</div>
+						</div>
+					</div>
+
+					<!-- 页面内容区域 -->
+					<div class="page-content">
+						<!-- 控制面板 -->
+						<div v-if="currentPage === 'dashboard'">
+							<div class="dashboard">
+								<div class="card">
+									<div class="card-header">
+										<div class="card-title">教学资源</div>
+										<div class="card-icon">
+											<i class="fas fa-book"></i>
+										</div>
+									</div>
+									<div class="card-stats">1,248</div>
+									<div class="card-desc">已创建的教学资源总数</div>
+								</div>
+								<div class="card">
+									<div class="card-header">
+										<div class="card-title">AI生成</div>
+										<div class="card-icon">
+											<i class="fas fa-robot"></i>
+										</div>
+									</div>
+									<div class="card-stats">763</div>
+									<div class="card-desc">AI辅助生成的教学资源</div>
+								</div>
+								<div class="card">
+									<div class="card-header">
+										<div class="card-title">今日活跃</div>
+										<div class="card-icon">
+											<i class="fas fa-chart-line"></i>
+										</div>
+									</div>
+									<div class="card-stats">42</div>
+									<div class="card-desc">今日新增或修改的资源</div>
+								</div>
+							</div>
+
+							<!-- 上传区域 -->
+							<div class="upload-section">
+								<h2 class="section-title">
+									<i class="fas fa-cloud-upload-alt"></i>
+									上传教学资源
+								</h2>
+								<div class="upload-area" id="uploadArea" @click="openFileDialog">
+									<div class="upload-icon">
+										<i class="fas fa-file-upload"></i>
+									</div>
+									<h3 class="upload-text">拖放文件到此处或点击上传</h3>
+									<p class="upload-subtext">支持文本、图像、音频、视频等多种格式</p>
+									<button class="btn btn-primary">
+										<i class="fas fa-folder-open"></i>
+										选择文件
+									</button>
+									<div class="file-types">
+										<div class="file-type">PDF/DOC/TXT</div>
+										<div class="file-type">JPG/PNG/GIF</div>
+										<div class="file-type">MP3/WAV</div>
+										<div class="file-type">MP4/MOV</div>
+										<div class="file-type">PPT/XLS</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- 资源制作工具 -->
+							<div class="tools-section">
+								<h2 class="section-title">
+									<i class="fas fa-cogs"></i>
+									资源制作工具
+								</h2>
+								<div class="tools-grid">
+									<div class="tool-card" @click="switchPage('creation')">
+										<div class="tool-icon">
+											<i class="fas fa-font"></i>
+										</div>
+										<h3 class="tool-title">文本生成</h3>
+										<p class="tool-desc">利用大模型生成教学大纲、习题、案例等文本内容</p>
+									</div>
+									<div class="tool-card" @click="switchPage('creation')">
+										<div class="tool-icon">
+											<i class="fas fa-image"></i>
+										</div>
+										<h3 class="tool-title">图像生成</h3>
+										<p class="tool-desc">根据描述生成教学插图、图表和示意图</p>
+									</div>
+									<div class="tool-card" @click="switchPage('creation')">
+										<div class="tool-icon">
+											<i class="fas fa-headphones"></i>
+										</div>
+										<h3 class="tool-title">音频合成</h3>
+										<p class="tool-desc">生成语音讲解、背景音乐等音频资源</p>
+									</div>
+									<div class="tool-card" @click="switchPage('creation')">
+										<div class="tool-icon">
+											<i class="fas fa-video"></i>
+										</div>
+										<h3 class="tool-title">视频生成</h3>
+										<p class="tool-desc">自动生成教学讲解视频与动画</p>
+									</div>
+									<div class="tool-card" @click="switchPage('creation')">
+										<div class="tool-icon">
+											<i class="fas fa-film"></i>
+										</div>
+										<h3 class="tool-title">视频编辑</h3>
+										<p class="tool-desc">AI辅助视频剪辑与特效添加</p>
+									</div>
+									<div class="tool-card" @click="switchPage('courseware')">
+										<div class="tool-icon">
+											<i class="fas fa-file-powerpoint"></i>
+										</div>
+										<h3 class="tool-title">课件制作</h3>
+										<p class="tool-desc">一键生成完整教学课件</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 资源上传页面 -->
+						<div v-if="currentPage === 'upload'">
+							<h2 class="page-title">
+								<i class="fas fa-cloud-upload-alt"></i>
+								教学资源上传
+							</h2>
+
+							<div class="upload-section">
+								<div class="upload-area" @click="openFileDialog">
+									<div class="upload-icon">
+										<i class="fas fa-file-upload"></i>
+									</div>
+									<h3 class="upload-text">拖放文件到此处或点击上传</h3>
+									<p class="upload-subtext">支持文本、图像、音频、视频等多种格式</p>
+									<button class="btn btn-primary">
+										<i class="fas fa-folder-open"></i>
+										选择文件
+									</button>
+									<div class="file-types">
+										<div class="file-type">PDF/DOC/TXT</div>
+										<div class="file-type">JPG/PNG/GIF</div>
+										<div class="file-type">MP3/WAV</div>
+										<div class="file-type">MP4/MOV</div>
+										<div class="file-type">PPT/XLS</div>
+									</div>
+								</div>
+							</div>
+
+							<h3 class="section-title" style="margin-top: 40px;">
+								<i class="fas fa-history"></i>
+								最近上传
+							</h3>
+
+							<div class="resource-grid">
+								<div class="resource-card" v-for="(item, index) in recentUploads" :key="index">
+									<div class="resource-thumb">
+										<div class="resource-type">{{ item.type }}</div>
+									</div>
+									<div class="resource-info">
+										<h3 class="resource-title">{{ item.name }}</h3>
+										<div class="resource-meta">
+											<span>{{ item.date }}</span>
+											<span>{{ item.size }}</span>
+										</div>
+										<div class="resource-actions">
+											<button class="action-btn">
+												<i class="fas fa-eye"></i> 预览
+											</button>
+											<button class="action-btn">
+												<i class="fas fa-trash"></i> 删除
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 资源制作页面 -->
+						<div v-if="currentPage === 'creation'">
+							<h2 class="page-title">
+								<i class="fas fa-cogs"></i>
+								教学资源制作
+							</h2>
+
+							<div class="tools-grid">
+								<div class="tool-card" @click="openTool('text')">
+									<div class="tool-icon">
+										<i class="fas fa-font"></i>
+									</div>
+									<h3 class="tool-title">文本生成</h3>
+									<p class="tool-desc">利用大模型生成教学大纲、习题、案例等文本内容</p>
+								</div>
+								<div class="tool-card" @click="openTool('image')">
+									<div class="tool-icon">
+										<i class="fas fa-image"></i>
+									</div>
+									<h3 class="tool-title">图像生成</h3>
+									<p class="tool-desc">根据描述生成教学插图、图表和示意图</p>
+								</div>
+								<div class="tool-card" @click="openTool('audio')">
+									<div class="tool-icon">
+										<i class="fas fa-headphones"></i>
+									</div>
+									<h3 class="tool-title">AI答疑</h3>
+									<p class="tool-desc">智能解答相关疑惑</p>
+								</div>
+								<div class="tool-card" @click="openTool('video')">
+									<div class="tool-icon">
+										<i class="fas fa-video"></i>
+									</div>
+									<h3 class="tool-title">视频生成</h3>
+									<p class="tool-desc">自动生成教学讲解视频与动画</p>
+								</div>
+								<!-- <div class="tool-card" @click="openTool('edit')">
+									<div class="tool-icon">
+										<i class="fas fa-film"></i>
+									</div>
+									<h3 class="tool-title">视频编辑</h3>
+									<p class="tool-desc">AI辅助视频剪辑与特效添加</p>
+								</div> -->
+								<div class="tool-card" @click="switchPage('courseware')">
+									<div class="tool-icon">
+										<i class="fas fa-file-powerpoint"></i>
+									</div>
+									<h3 class="tool-title">课件制作</h3>
+									<p class="tool-desc">一键生成完整教学课件</p>
+								</div>
+							</div>
+
+							<!-- 当前工具内容区 -->
+							<div v-if="activeTool" style="margin-top: 40px;">
+								<h3 class="section-title">
+									<i :class="activeTool.icon"></i>
+									{{ activeTool.title }}
+								</h3>
+
+								<div class="tool-content"
+									style="background-color: var(--card-bg); border-radius: 15px; padding: 25px;">
+									<div v-if="activeTool.id === 'text'">
+										<el-input type="textarea" :rows="5"
+											placeholder="请输入要生成的文本描述，例如：生成一份关于牛顿定律的高中物理练习题"
+											style="margin-bottom: 20px;"></el-input>
+										<div style="display: flex; gap: 15px; margin-bottom: 20px;">
+											<el-select placeholder="选择难度" style="width: 150px;">
+												<el-option label="初级" value="easy"></el-option>
+												<el-option label="中级" value="medium"></el-option>
+												<el-option label="高级" value="hard"></el-option>
+											</el-select>
+											<el-select placeholder="选择类型" style="width: 150px;">
+												<el-option label="选择题" value="choice"></el-option>
+												<el-option label="填空题" value="fill"></el-option>
+												<el-option label="解答题" value="essay"></el-option>
+											</el-select>
+											<el-select placeholder="选择科目" style="width: 150px;">
+												<el-option label="物理" value="physics"></el-option>
+												<el-option label="数学" value="math"></el-option>
+												<el-option label="化学" value="chemistry"></el-option>
+											</el-select>
+										</div>
+										<el-button type="primary" icon="fas fa-magic" @click="generateText">
+											生成内容
+										</el-button>
+									</div>
+
+									<div v-if="activeTool.id === 'image'">
+										<el-input type="textarea" :rows="3"
+											placeholder="请输入图像描述，例如：一个展示光合作用过程的示意图，适合初中生物教学"
+											style="margin-bottom: 20px;"></el-input>
+										<div style="display: flex; gap: 15px; margin-bottom: 20px;">
+											<el-select placeholder="选择风格" style="width: 200px;">
+												<el-option label="写实风格" value="realistic"></el-option>
+												<el-option label="卡通风格" value="cartoon"></el-option>
+												<el-option label="手绘风格" value="handdrawn"></el-option>
+											</el-select>
+											<el-select placeholder="选择尺寸" style="width: 150px;">
+												<el-option label="小 (800x600)" value="small"></el-option>
+												<el-option label="中 (1200x900)" value="medium"></el-option>
+												<el-option label="大 (1920x1080)" value="large"></el-option>
+											</el-select>
+										</div>
+										<el-button type="primary" icon="fas fa-paint-brush" @click="generateImage">
+											生成图像
+										</el-button>
+										<div style="margin-top: 25px; text-align: center; color: var(--gray);">
+											<i class="fas fa-image" style="font-size: 60px; opacity: 0.3;"></i>
+											<p style="margin-top: 10px;">生成的图像将显示在这里</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+						<!-- 课件生成页面 -->
+						<div v-if="currentPage === 'courseware'">
+							<h2 class="page-title">
+								<i class="fas fa-chalkboard-teacher"></i>
+								智能课件生成
+							</h2>
+
+							<!-- <div class="courseware-builder">
+								左侧输入区域
+								<div class="input-panel">
+									<h3><i class="fas fa-pencil-alt"></i> 课件内容描述</h3>
+									<div class="input-field">
+										<textarea v-model="coursewarePrompt"
+											placeholder="请输入课件内容描述，例如：生成一份关于牛顿定律的高中物理课件，包含定义、公式、例题和实验视频"></textarea>
+										<textarea v-model="message"></textarea>
+										<div class="hint">详细描述您需要的课件内容和格式要求</div>
+									</div>
+
+									<h3><i class="fas fa-sliders-h"></i> 生成选项</h3>
+									<div style="display: flex; gap: 15px; margin-bottom: 20px;">
+										<el-select v-model="coursewareOptions.grade" placeholder="课型" style="flex: 1;">
+											<el-option label="新授" value="new"></el-option>
+											<el-option label="复习" value="noNew"></el-option>
+										</el-select>
+
+									</div>
+
+									<button class="generate-btn" @click="generateCourseware" :disabled="generating">
+										<i class="fas fa-magic"></i>
+										{{ generating ? '课件生成中...' : '生成课件' }}
+									</button>
+								</div>
+
+								右侧输出区域
+								<div class="output-panel">
+									<h3><i class="fas fa-file-alt"></i> 生成结果</h3>
+									<div class="output-content">
+										<div v-if="generatedContent">
+											{{ generatedContent }}
+										</div>
+										<div v-else-if="generating" class="processing">
+											<div class="spinner"></div>
+											<p>正在生成课件内容，请稍候...</p>
+										</div>
+										<div v-else class="placeholder-text" v-text="responseText">
+											<i class="fas fa-file-alt"
+												style="font-size: 48px; margin-bottom: 15px;"></i>
+											<p>生成的课件内容将显示在这里</p>
+											<p style="margin-top: 10px; font-size: 14px;">您可以输入描述并点击"生成课件"按钮开始</p>
+										</div>
+									</div>
+
+									<div v-if="generatedContent" style="margin-top: 20px; display: flex; gap: 15px;">
+										<el-button type="primary" style="flex: 1;">
+											<i class="fas fa-download"></i> 下载课件
+										</el-button>
+										<el-button style="flex: 1;">
+											<i class="fas fa-edit"></i> 编辑内容
+										</el-button>
+									</div>
+								</div>
+							</div> -->
+							<iframe
+ 								src="http://47.120.30.18:8099/chatbot/9qfljbaTSKj4Ejkk"
+ 								style="width: 100%; height: 100%; min-height: 700px"
+								frameborder="0"
+								allow="microphone">
+							</iframe>
+						</div>
+
+						<!-- AI助手页面 -->
+						<div v-if="currentPage === 'ai'">
+							<div class="ai-assistant">
+								<div class="ai-header">
+									<h2 class="ai-title">AI教学助手</h2>
+									<p class="ai-subtitle">
+										智能问答、资源建议、内容优化，您的全天候教学助手
+									</p>
+								</div>
+								<div class="ai-content">
+									<div class="ai-chat">
+										<div class="chat-header">
+											<div class="header-title">AI教学助手</div>
+											<div class="file-info" v-if="uploadedFile">
+												📎 {{ uploadedFile.name }}
+											</div>
+										</div>
+										<div class="chat-messages" id="chat-messages">
+											<div class="message bot-message">
+												<div class="message-content">
+													你好！我是AI教学助手，有什么我可以帮你的吗？
+												</div>
+												<div class="message-time">
+													{{ formatTime(new Date()) }}
+												</div>
+											</div>
+											<div v-for="(message, index) in chatMessages" :key="index" class="message"
+												:class="message.sender + '-message'">
+												<div class="message-content" v-html="message.content"></div>
+												<div class="message-time">
+													{{ formatTime(message.time) }}
+												</div>
+											</div>
+											<div class="typing-indicator" v-show="isTyping">
+												<span class="typing-text">正在输入</span>
+												<div class="typing-dots">
+													<span></span>
+													<span></span>
+													<span></span>
+												</div>
+											</div>
+										</div>
+										<div class="chat-input-container">
+											<div class="input-icons">
+												<button class="icon-button" @click="triggerFileUpload" title="上传文件">
+													&#128206;
+												</button>
+												<input type="file" id="file-input" ref="fileInput"
+													@change="handleFileUpload" style="display: none" />
+											</div>
+											<input type="text" class="ai-input" v-model="aiInput" placeholder="输入消息..."
+												@keyup.enter="sendMessage" />
+											<button class="ai-send-button" @click="sendMessage" :disabled="isSending">
+												<i class="fas fa-paper-plane" style="margin-right: 5px"></i>发送
+											</button>
+											<button class="ai-cancel-button" @click="cancelRequest" v-show="isSending">
+												<i class="fas fa-times" style="margin-right: 5px"></i>取消
+											</button>
+										</div>
+									</div>
+									<div class="ai-features">
+										<div class="feature-card" @click="aiFeature('suggestion')">
+											<div class="feature-icon">
+												<i class="fas fa-lightbulb"></i>
+											</div>
+											<div class="feature-text">
+												<h3>智能建议</h3>
+												<p>根据课程内容推荐相关资源</p>
+											</div>
+										</div>
+										<div class="feature-card" @click="aiFeature('optimization')">
+											<div class="feature-icon">
+												<i class="fas fa-check-circle"></i>
+											</div>
+											<div class="feature-text">
+												<h3>内容优化</h3>
+												<p>优化教学内容的表达与结构</p>
+											</div>
+										</div>
+										<div class="feature-card" @click="aiFeature('conversion')">
+											<div class="feature-icon">
+												<i class="fas fa-sync-alt"></i>
+											</div>
+											<div class="feature-text">
+												<h3>格式转换</h3>
+												<p>一键转换资源格式</p>
+											</div>
+										</div>
+										<div class="feature-card" @click="aiFeature('collaboration')">
+											<div class="feature-icon">
+												<i class="fas fa-users"></i>
+											</div>
+											<div class="feature-text">
+												<h3>协作支持</h3>
+												<p>团队协作教学资源制作</p>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- 按顺序加载脚本 -->
+						<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+						<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
+						<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+
+						<script
+ src="http://47.120.30.18:8099/embed.min.js"
+ id="kxQco2v1TEL2pwHD"
+ defer>
+</script>
+
+						<script>
+							// 配置Marked.js
+							const renderer = new marked.Renderer();
+							const originalLinkRenderer = renderer.link;
+							renderer.link = function(href, title, text) {
+								const html = originalLinkRenderer.call(this, href, title, text);
+								return html.replace(
+									/^<a /,
+									'<a target="_blank" rel="noopener noreferrer" '
+								);
+							};
+
+							const renderMath = (text) => {
+								try {
+									if (text.startsWith("$$") && text.endsWith("$$")) {
+										const latex = text.slice(2, -2);
+										return katex.renderToString(latex, {
+											displayMode: true
+										});
+									} else if (text.startsWith("$") && text.endsWith("$")) {
+										const latex = text.slice(1, -1);
+										return katex.renderToString(latex, {
+											displayMode: false
+										});
+									}
+								} catch (error) {
+									console.warn("KaTeX rendering error:", error);
+									return `<code>${DOMPurify.sanitize(text)}</code>`;
+								}
+								return false;
+							};
+
+							renderer.codespan = function(code) {
+								const mathHtml = renderMath(code);
+								if (mathHtml) {
+									return mathHtml;
+								}
+								return `<code>${DOMPurify.sanitize(code)}</code>`;
+							};
+
+							renderer.code = function(code, infostring, escaped) {
+								const lang = (infostring || "").match(/\S*/)[0];
+								if (
+									lang &&
+									(lang.toLowerCase() === "math" || lang.toLowerCase() === "latex")
+								) {
+									try {
+										const latex = code.trim();
+										return katex.renderToString(latex, {
+											displayMode: true
+										});
+									} catch (error) {
+										console.warn("KaTeX block rendering error:", error);
+									}
+								}
+								const escapedCode = escaped ? code : DOMPurify.sanitize(code);
+								return `<pre><code>${escapedCode}</code></pre>`;
+							};
+
+							marked.setOptions({
+								renderer: renderer,
+								gfm: true,
+								breaks: false,
+								smartypants: true,
+							});
+
+							new Vue({
+								el: '#app',
+								data() {
+									return {
+										searchPlaceholder: "向AI助手提问...",
+										currentPage: "ai",
+										activeMenu: "ai",
+										aiInput: "",
+										chatMessages: [],
+										isTyping: false,
+										isSending: false,
+										uploadedFile: null,
+										abortController: null,
+										botMessageRef: null,
+										accumulatedAnswer: "",
+										renderQueue: [],
+										renderTimer: null,
+										inThinkingBlock: false,
+										thinkingContent: "",
+										message: '',
+										searchPlaceholder: '',
+										aiResponseText: '',
+										currentPage: 'dashboard',
+										activeMenu: 'dashboard',
+										activeFilter: '全部',
+										activeTool: null,
+										aiInput: '',
+										responseText: '',
+										username: '张老师',
+										email: 'zhang@example.com',
+										theme: 'dark',
+										primaryColor: '#3498db',
+										textModel: 'gpt4',
+										imageModel: 'dalle3',
+										notifications: {
+											system: true,
+											updates: true,
+											collaboration: true
+										},
+
+										// 课件生成相关数据
+										coursewarePrompt: '',
+										coursewareOptions: {
+											grade: '',
+											subject: '',
+											format: 'pptx'
+										},
+										generatedContent: '',
+										generating: false
+									};
+								},
+								computed: {
+									filteredResources() {
+										if (this.activeFilter === '全部') {
+											return this.resources;
+										}
+										return this.resources.filter(r => r.type === this.activeFilter);
+									}
+								},
+								methods: {
+									handleMenuSelect(index) {
+										this.currentPage = index;
+										this.activeMenu = index;
+										this.activeTool = null;
+
+										const placeholders = {
+											dashboard: '搜索教学资源...',
+											upload: '搜索上传的文件...',
+											creation: '搜索工具或资源...',
+											management: '搜索教学资源...',
+											courseware: '搜索课件模板...',
+											ai: '向AI助手提问...',
+											collaboration: '搜索团队或成员...',
+											settings: '搜索设置选项...'
+										};
+										this.searchPlaceholder = placeholders[index] || '搜索...';
+									},
+									switchPage(page) {
+										this.currentPage = page;
+										this.activeMenu = page;
+									},
+									
+									openTool(toolId) {
+										this.activeTool = this.tools.find(t => t.id === toolId);
+									},
+
+									//AI助手
+									// 过滤模型输出中的思考过程
+									processModelOutput(text) {
+									  // 检测思考块开始
+									  if (text.includes("<think>") && !text.includes("</think>")) {
+									    this.inThinkingBlock = true;
+									    const thinkStart = text.indexOf("<think>");
+									    this.thinkingContent = text.substring(thinkStart + 7);
+									    return text.substring(0, thinkStart);
+									  }
+									
+									  // 检测思考块结束
+									  if (this.inThinkingBlock && text.includes("</think>")) {
+									    const thinkEnd = text.indexOf("</think>");
+									    this.thinkingContent += text.substring(0, thinkEnd);
+									    this.inThinkingBlock = false;
+									
+									    const remainingText = text.substring(thinkEnd + 8);
+									    return this.processModelOutput(remainingText);
+									  }
+									
+									  // 如果在思考块中，继续收集思考内容
+									  if (this.inThinkingBlock) {
+									    this.thinkingContent += text;
+									    return "";
+									  }
+									
+									  // 检测完整的思考块并移除
+									  if (text.includes("<think>") && text.includes("</think>")) {
+									    const thinkStart = text.indexOf("<think>");
+									    const thinkEnd = text.indexOf("</think>");
+									
+									    // 提取思考块之前的内容
+									    const beforeThink = text.substring(0, thinkStart);
+									
+									    // 提取思考块之后的内容并递归处理
+									    const afterThink = text.substring(thinkEnd + 8);
+									
+									    return beforeThink + this.processModelOutput(afterThink);
+									  }
+									
+									  // 如果没有思考块，直接返回文本
+									  return text;
+									},
+									
+									// 逐字渲染效果
+									renderTextGradually() {
+									  if (this.renderQueue.length === 0) return;
+									
+									  // 获取下一个要渲染的字符
+									  const nextChar = this.renderQueue.shift();
+									  this.accumulatedAnswer += nextChar;
+									
+									  // 更新消息内容
+									  this.botMessageRef.content = marked.parse(
+									    this.accumulatedAnswer + '<span class="typing-cursor"></span>'
+									  );
+									  this.scrollToBottom();
+									
+									  // 设置下一个渲染时间
+									  if (this.renderQueue.length > 0) {
+									    // 根据字符类型设置不同的渲染速度
+									    const charType = nextChar.match(/[\u4e00-\u9fa5]/)
+									      ? "chinese"
+									      : nextChar.match(/[.,;:!?]/)
+									      ? "punctuation"
+									      : "other";
+									
+									    let delay = 20; // 默认延迟
+									    if (charType === "chinese") delay = 100;
+									    else if (charType === "punctuation") delay = 200;
+									
+									    this.renderTimer = setTimeout(this.renderTextGradually, delay);
+									  } else {
+									    // 渲染完成，移除光标
+									    this.botMessageRef.content = marked.parse(this.accumulatedAnswer);
+									    this.scrollToBottom();
+									  }
+									},
+									
+									// 格式化时间
+									formatTime(date) {
+									  return date.toLocaleTimeString("zh-CN", {
+									    hour: "2-digit",
+									    minute: "2-digit",
+									  });
+									},
+									
+									// AI聊天相关方法
+									triggerFileUpload() {
+									  this.$refs.fileInput.click();
+									},
+									handleFileUpload(event) {
+									  const file = event.target.files[0];
+									  if (file) {
+									    this.uploadedFile = file;
+									    console.log("File selected:", file.name);
+									  } else {
+									    this.uploadedFile = null;
+									  }
+									},
+									async sendMessage() {
+									  if (!this.aiInput.trim() && !this.uploadedFile) return;
+									
+									  const message = this.aiInput.trim();
+									  if (message) {
+									    this.addMessage("user", message);
+									  }
+									
+									  if (this.uploadedFile) {
+									    this.addMessage(
+									      "user",
+									      `📁 已上传文件: ${this.uploadedFile.name}`,
+									      true
+									    );
+									  }
+									
+									  this.aiInput = "";
+									  this.isSending = true;
+									  this.isTyping = true;
+									  this.botMessageRef = null;
+									  this.accumulatedAnswer = "";
+									  this.renderQueue = [];
+									  this.inThinkingBlock = false;
+									  this.thinkingContent = "";
+									
+									  // 清除之前的渲染定时器
+									  if (this.renderTimer) {
+									    clearTimeout(this.renderTimer);
+									    this.renderTimer = null;
+									  }
+									
+									  try {
+									    this.abortController = new AbortController();
+									
+									    const requestData = {
+									      inputs: {},
+									      query:
+									        message ||
+									        (this.uploadedFile
+									          ? `请分析上传的文件: ${this.uploadedFile.name}`
+									          : ""),
+									      response_mode: "streaming",
+									      conversation_id: "",
+									      user: "abc-123",
+									    };
+									
+									    const response = await fetch("/stream-chat", {
+									      method: "POST",
+									      headers: {
+									        "Content-Type": "application/json",
+									      },
+									      body: JSON.stringify(requestData),
+									      signal: this.abortController.signal,
+									    });
+									
+									    if (!response.ok) {
+									      const errorData = await response.json().catch(() => ({}));
+									      throw new Error(
+									        `HTTP错误! 状态码: ${response.status}. 消息: ${
+									          errorData.message || "未知错误"
+									        }`
+									      );
+									    }
+									
+									    const reader = response.body.getReader();
+									    const decoder = new TextDecoder("utf-8");
+									    let buffer = "";
+									
+									    while (true) {
+									      const { done, value } = await reader.read();
+									      if (done) break;
+									
+									      buffer += decoder.decode(value, { stream: true });
+									      let lines = buffer.split("\n");
+									      buffer = lines.pop();
+									
+									      for (let line of lines) {
+									        if (!line.trim()) continue;
+									
+									        if (line.startsWith("data:")) {
+									          line = line.slice(5).trim();
+									        }
+									        if (!line) continue;
+									
+									        try {
+									          const data = JSON.parse(line);
+									          if (data.answer !== undefined) {
+									            // 处理模型输出，过滤掉思考过程
+									            const processedAnswer = this.processModelOutput(
+									              data.answer
+									            );
+									
+									            if (processedAnswer) {
+									              // 将处理后的内容加入渲染队列
+									              for (let char of processedAnswer) {
+									                this.renderQueue.push(char);
+									              }
+									
+									              // 如果是第一条消息，创建消息对象
+									              if (!this.botMessageRef) {
+									                this.isTyping = false;
+									                this.botMessageRef = {
+									                  sender: "bot",
+									                  content: '<span class="typing-cursor"></span>',
+									                  time: new Date(),
+									                };
+									                this.chatMessages.push(this.botMessageRef);
+									              }
+									
+									              // 如果没有正在进行的渲染，开始渲染
+									              if (!this.renderTimer && this.renderQueue.length > 0) {
+									                this.renderTextGradually();
+									              }
+									            }
+									          }
+									        } catch (parseError) {
+									          console.warn("无法解析SSE数据:", line, parseError);
+									        }
+									      }
+									    }
+									
+									    // 处理剩余数据
+									    if (buffer.trim()) {
+									      try {
+									        const data = JSON.parse(buffer);
+									        if (data.answer !== undefined) {
+									          // 处理模型输出，过滤掉思考过程
+									          const processedAnswer = this.processModelOutput(
+									            data.answer
+									          );
+									
+									          if (processedAnswer) {
+									            // 将处理后的内容加入渲染队列
+									            for (let char of processedAnswer) {
+									              this.renderQueue.push(char);
+									            }
+									
+									            // 如果没有正在进行的渲染，开始渲染
+									            if (!this.renderTimer && this.renderQueue.length > 0) {
+									              this.renderTextGradually();
+									            }
+									          }
+									        }
+									      } catch (parseError) {
+									        console.warn("无法解析最终缓冲区:", buffer, parseError);
+									      }
+									    }
+									  } catch (error) {
+									    if (error.name === "AbortError") {
+									      console.log("请求已被取消");
+									      this.addMessage("bot", "请求已被取消");
+									    } else {
+									      console.error("错误:", error);
+									      this.addMessage("bot", `抱歉，发生错误: ${error.message}`);
+									    }
+									  } finally {
+									    this.isSending = false;
+									    this.isTyping = false;
+									    this.uploadedFile = null;
+									    this.abortController = null;
+									
+									    // 完成当前消息
+									    if (
+									      this.botMessageRef &&
+									      this.renderQueue.length === 0 &&
+									      !this.renderTimer
+									    ) {
+									      this.botMessageRef.content = marked.parse(
+									        this.accumulatedAnswer
+									      );
+									    }
+									  }
+									},
+									addMessage(sender, text, isFile = false) {
+									  const message = {
+									    sender: sender,
+									    content: isFile ? text : marked.parse(text),
+									    time: new Date(),
+									  };
+									  this.chatMessages.push(message);
+									  this.scrollToBottom();
+									},
+									scrollToBottom() {
+									  this.$nextTick(() => {
+									    const chatMessagesEl = document.getElementById("chat-messages");
+									    if (chatMessagesEl) {
+									      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+									    }
+									  });
+									},
+									cancelRequest() {
+									  if (this.abortController) {
+									    this.abortController.abort();
+									    this.isSending = false;
+									    this.isTyping = false;
+									
+									    // 如果正在渲染，清除渲染队列
+									    if (this.renderTimer) {
+									      clearTimeout(this.renderTimer);
+									      this.renderTimer = null;
+									    }
+									    this.renderQueue = [];
+									
+									    // 完成当前消息
+									    if (this.botMessageRef) {
+									      this.botMessageRef.content = marked.parse(
+									        this.accumulatedAnswer
+									      );
+									    }
+									  }
+									},
+									aiFeature(feature) {
+									  const features = {
+									    suggestion: "智能建议",
+									    optimization: "内容优化",
+									    conversion: "格式转换",
+									    collaboration: "协作支持",
+									  };
+									  this.aiInput = `请使用${features[feature]}功能：`;
+									},
+									generateText() {
+										alert('正在生成文本内容，请稍候...');
+									},
+									generateImage() {
+										alert('正在生成图像，请稍候...');
+									}
+								},
+								
+								//课件内容描述
+					generateCourseware() {
+						if (!this.coursewarePrompt.trim()) {
+							this.$message.warning('请输入课件内容描述');
+							return;
+						}
+
+						const data = {
+							inputs: {},
+							query: "课件",
+							message: "",
+							response_mode: "blocking",
+							conversation_id: "",
+							user: "abc-123",
+							teaching_type: "新授课",
+							session_id: "abc123",
+							temperature: 0.7
+						};
+
+						axios.post('http://47.120.30.18:8099/v1/chat-messages', data, {
+								headers: {
+									'Authorization': 'Bearer app-8ibt5miX1ck5w9YmiGrfatOx',
+									'Content-Type': 'application/json'
+								}
+							})
+							.then(response => {
+								// 检查响应数据是否包含 answer 字段
+								if (response.data && response.data.answer) {
+									this.responseText = response.data.answer;
+								} else if (Array.isArray(response.data)) {
+									// 如果是数组，尝试提取第一个元素的 answer
+									const firstItem = response.data[0];
+									if (firstItem && firstItem.answer) {
+										this.responseText = firstItem.answer;
+									} else {
+										this.responseText = '抱歉，服务器没有返回有效内容。';
+									}
+								} else {
+									this.responseText = '抱歉，服务器没有返回有效内容。';
+								}
+							})
+							.catch(error => {
+								console.error('请求错误:', error);
+								this.responseText = '抱歉，请求失败，请稍后重试';
+							});
+
+					},
+
+								mounted() {
+								  // 初始化AI助手页面
+								  this.handleMenuSelect("ai");
+								},
+								
+							});
+						</script>
+	</body>
+</html>
